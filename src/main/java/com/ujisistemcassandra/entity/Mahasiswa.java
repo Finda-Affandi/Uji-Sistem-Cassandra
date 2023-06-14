@@ -1,23 +1,22 @@
 package com.ujisistemcassandra.entity;
 
 import org.springframework.data.cassandra.core.mapping.Column;
+import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
 import org.springframework.data.cassandra.core.mapping.Table;
 
-@Table
+@Table("db_mahasiswa")
 public class Mahasiswa {
-    @PrimaryKeyColumn(
-            name = "nim"
-    )
+    @PrimaryKey
     private int nim;
 
-    @Column
+    @Column("name")
     private String nama;
 
-    @Column
+    @Column("alamat")
     private String alamat;
 
-    @Column
+    @Column("tanggal_lahir")
     private String tanggal_lahir;
 
     public int getNim() {

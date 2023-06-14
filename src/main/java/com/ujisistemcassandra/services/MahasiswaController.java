@@ -15,6 +15,10 @@ public class MahasiswaController {
     @Autowired
     private MahasiswaRepository mahasiswaRepository;
 
+    public MahasiswaController(MahasiswaRepository mahasiswaRepository) {
+        this.mahasiswaRepository = mahasiswaRepository;
+    }
+
     @GetMapping
     public List<Mahasiswa> getAllMahasiswa() {
         return mahasiswaRepository.findAll();
