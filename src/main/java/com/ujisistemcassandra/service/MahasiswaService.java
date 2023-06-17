@@ -9,12 +9,13 @@ import java.util.List;
 
 @Service
 public class MahasiswaService {
+    @Autowired
     private final MahasiswaRepository mahasiswaRepository;
-
     @Autowired
     public MahasiswaService(MahasiswaRepository mahasiswaRepository) {
         this.mahasiswaRepository = mahasiswaRepository;
     }
+
 
     public List<Mahasiswa> getAllMahasiswa() {
         return mahasiswaRepository.findAll();
