@@ -6,11 +6,11 @@ import org.springframework.data.cassandra.core.mapping.Table;
 @Table("mahasiswa")
 public class Mahasiswa {
     @Id
-    private String nim;
+    private int nim;
     private String nama;
     private String alamat;
 
-    public Mahasiswa(String nim, String nama, String alamat) {
+    public Mahasiswa(int nim, String nama, String alamat) {
         this.nim = nim;
         this.nama = nama;
         this.alamat = alamat;
@@ -19,11 +19,11 @@ public class Mahasiswa {
     public Mahasiswa() {
     }
 
-    public String getNim() {
+    public int getNim() {
         return nim;
     }
 
-    public void setNim(String nim) {
+    public void setNim(int nim) {
         this.nim = nim;
     }
 
