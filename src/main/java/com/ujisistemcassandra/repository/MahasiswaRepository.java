@@ -19,13 +19,6 @@ public class MahasiswaRepository {
     public void saveMahasiswa(Mahasiswa mahasiswa) {
         String query = "INSERT INTO ujisistemc.mahasiswa (nim, nama, alamat) VALUES ("+ mahasiswa.getNim() +", '"+ mahasiswa.getNama() +"', '"+ mahasiswa.getAlamat() +"')";
         jdbcTemplate.update(query);
-//        if(insertData > 0) {
-//            System.out.println("Data insert succesfully!");
-//        } else {
-//            System.out.println("Failed to insert data!");
-//        }
-//        jdbcTemplate.update("INSERT INTO ujisistemc.mahasiswa (nim, nama, alamat) VALUES (?, ?, ?)",
-//                mahasiswa.getNim(), mahasiswa.getNama(), mahasiswa.getAlamat());
     }
     public List<Mahasiswa> findAll(){
         return jdbcTemplate.query("SELECT * FROM ujisistemc.mahasiswa",
