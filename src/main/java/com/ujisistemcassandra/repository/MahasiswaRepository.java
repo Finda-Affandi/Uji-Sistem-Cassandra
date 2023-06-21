@@ -17,11 +17,11 @@ public class MahasiswaRepository {
     }
 
     public void saveMahasiswa(Mahasiswa mahasiswa) {
-        String query = "INSERT INTO ujisistemc.mahasiswa (nim, nama, alamat) VALUES ("+ mahasiswa.getNim() +", '"+ mahasiswa.getNama() +"', '"+ mahasiswa.getAlamat() +"')";
+        String query = "INSERT INTO ujisistem.mahasiswa (nim, nama, alamat) VALUES ("+ mahasiswa.getNim() +", '"+ mahasiswa.getNama() +"', '"+ mahasiswa.getAlamat() +"')";
         jdbcTemplate.update(query);
     }
     public List<Mahasiswa> findAll(){
-        return jdbcTemplate.query("SELECT * FROM ujisistemc.mahasiswa",
+        return jdbcTemplate.query("SELECT * FROM ujisistem.mahasiswa",
                 (resultSet, rowNum) -> {
                     Mahasiswa mahasiswa = new Mahasiswa();
                     mahasiswa.setNim(resultSet.getInt("nim"));
