@@ -43,13 +43,21 @@ public class ServiceController {
 //            System.out.println(tableName);
             List<String> key = new ArrayList<>();
             for (Map<String, Object> data : dataList) {
-                serviceRepository.insertData(data);
-//                System.out.println(data.keySet());
-//                key.add(data.keySet().toString());
-                  key.addAll(data.keySet());
-//                System.out.println(data.values());
+                key.addAll(data.keySet());
+                break;
             }
-            serviceRepository.createTable(key);
+            for (String x : key) {
+                System.out.println(x);
+            }
+//            String tableName = serviceRepository.createTable(key);
+//            serviceRepository.insertData(dataList, tableName);
+//            for (Map<String, Object> data : dataList) {
+//                  serviceRepository.insertData(data);
+////                System.out.println(data.keySet());
+////                key.add(data.keySet().toString());
+//                  key.addAll(data.keySet());
+////                System.out.println(data.values());
+//            }
             return ResponseEntity.ok("Data inserted succesfully!");
         } catch (Exception e) {
             String eMessage = "Failed to insert data!";

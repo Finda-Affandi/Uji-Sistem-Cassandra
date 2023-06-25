@@ -5,10 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSetMetaData;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class ServiceRepository {
@@ -37,15 +34,47 @@ public class ServiceRepository {
                 });
     }
 
-    public void insertData(Map<String, Object> dataMap) {
-        String tableName = "ujisistemc.saleslineframe";
-        String columns = String.join(", ", dataMap.keySet());
-        String placeholders = String.join(", ", Collections.nCopies(dataMap.size(), "?"));
+//    public void insertData(Map<String, Object> dataMap) {
+//        String tableName = "ujisistemc.saleslineframe";
+//        String columns = String.join(", ", dataMap.keySet());
+//        String placeholders = String.join(", ", Collections.nCopies(dataMap.size(), "?"));
+//        String sql = String.format("INSERT INTO %s (%s) VALUES (%s)", tableName, columns, placeholders);
+//        jdbcTemplate.update(sql, dataMap.values().toArray());
+//    }
+
+    public void insertData(List<Map<String, Object>> dataList, String tableName) {
+        String columns = String.join(", ", dataList.get(0).keySet());
+
+        List<Object[]> batchParams = new ArrayList<>();
+
+        for (Map<String, Object> dataMap : dataList) {
+            Object[] values = dataMap.values().toArray();
+            batchParams.add(values);
+        }
+
+        String placeholders = String.join(", ", Collections.nCopies(dataList.get(0).size(), "?"));
+
         String sql = String.format("INSERT INTO %s (%s) VALUES (%s)", tableName, columns, placeholders);
-        jdbcTemplate.update(sql, dataMap.values().toArray());
+
+        jdbcTemplate.batchUpdate(sql, batchParams);
     }
 
-    public void createTable(List<String> column) {
+    public String createTable(List<String> columns) {
+        String tableName = "ujisistemc.coba";
+        List<String> column = new ArrayList<>();
 
+        for (String col : columns) {
+            String sqlCol = col + " varchar";
+            column.add(sqlCol);
+        }
+
+        column.add("PRIMARY KEY (RCVNO)");
+
+        String cols = String.join(", ", column);
+
+        String sql = String.format("CREATE TABLE %s (%S)", tableName, cols);
+        jdbcTemplate.update(sql);
+
+        return tableName;
     }
 }
