@@ -20,7 +20,7 @@ public class ServiceRepository {
     }
 
     public List<Map<String, Object>> getAllData(){
-        String tableName = "ujisistemc.mahasiswa";
+        String tableName = "ujisistemc.saleslineframe";
         String sql = String.format("SELECT * FROM %s", tableName);
         return jdbcTemplate.query(sql,
                 (resultSet, rowNum) -> {
@@ -38,10 +38,14 @@ public class ServiceRepository {
     }
 
     public void insertData(Map<String, Object> dataMap) {
-        String tableName = "ujisistemc.mahasiswa";
+        String tableName = "ujisistemc.saleslineframe";
         String columns = String.join(", ", dataMap.keySet());
         String placeholders = String.join(", ", Collections.nCopies(dataMap.size(), "?"));
         String sql = String.format("INSERT INTO %s (%s) VALUES (%s)", tableName, columns, placeholders);
         jdbcTemplate.update(sql, dataMap.values().toArray());
+    }
+
+    public void createTable(List<String> column) {
+
     }
 }
