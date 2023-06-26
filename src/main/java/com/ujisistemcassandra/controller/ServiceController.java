@@ -1,6 +1,8 @@
 package com.ujisistemcassandra.controller;
 
 
+import com.ujisistemcassandra.compareter.CompareList;
+import com.ujisistemcassandra.converter.listToLowercase;
 import com.ujisistemcassandra.repository.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -46,9 +48,28 @@ public class ServiceController {
                 key.addAll(data.keySet());
                 break;
             }
-            for (String x : key) {
-                System.out.println(x);
+
+            listToLowercase convToLow = new listToLowercase();
+            List<String> upKey = convToLow.listLowercase(key);
+
+            List<String> tableName = serviceRepository.getAllTableNames("ujisistemc");
+            for (String table : tableName) {
+                List<String> column = serviceRepository.getColumnList(table, "ujisistemc");
+                boolean cmpr = CompareList.compareLists(upKey, column);
+                if (cmpr) {
+                    System.out.println("yes");
+                } else {
+                    System.out.println("no");
+                }
+                System.out.println(column);
+                System.out.println(upKey);
+//                System.out.println("\n\n");
             }
+
+
+//            System.out.println(tableName);
+
+
 //            String tableName = serviceRepository.createTable(key);
 //            serviceRepository.insertData(dataList, tableName);
 //            for (Map<String, Object> data : dataList) {

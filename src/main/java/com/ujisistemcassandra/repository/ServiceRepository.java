@@ -59,6 +59,24 @@ public class ServiceRepository {
         jdbcTemplate.batchUpdate(sql, batchParams);
     }
 
+    public List<String> getAllTableNames(String keyspaceName) {
+        String query = "SELECT table_name FROM system_schema.tables WHERE keyspace_name = ?";
+        return jdbcTemplate.queryForList(query, String.class, keyspaceName);
+    }
+
+    public List<String> getColumnList(String table, String keyspaceName) {
+        String sql = "SELECT column_name FROM system_schema.columns WHERE keyspace_name = ? AND table_name = ?";
+        List<String> columnList = new ArrayList<>();
+
+        jdbcTemplate.query(sql, new Object[]{keyspaceName, table}, (rs, rowNum) -> {
+            String columnName = rs.getString("column_name");
+            columnList.add(columnName);
+            return null;
+        });
+
+        return columnList;
+    }
+
     public String createTable(List<String> columns) {
         String tableName = "ujisistemc.coba";
         List<String> column = new ArrayList<>();
@@ -72,7 +90,7 @@ public class ServiceRepository {
 
         String cols = String.join(", ", column);
 
-        String sql = String.format("CREATE TABLE %s (%S)", tableName, cols);
+        String sql = String.format("CREATE TABLE IF NOT EXISTS %s (%S)", tableName, cols);
         jdbcTemplate.update(sql);
 
         return tableName;
