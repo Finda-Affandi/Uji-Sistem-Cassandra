@@ -49,8 +49,8 @@ public class ServiceController {
             for (String x : key) {
                 System.out.println(x);
             }
-//            String tableName = serviceRepository.createTable(key);
-//            serviceRepository.insertData(dataList, tableName);
+            String tableName = serviceRepository.createTable(key);
+            serviceRepository.insertData(dataList, tableName);
 //            for (Map<String, Object> data : dataList) {
 //                  serviceRepository.insertData(data);
 ////                System.out.println(data.keySet());
