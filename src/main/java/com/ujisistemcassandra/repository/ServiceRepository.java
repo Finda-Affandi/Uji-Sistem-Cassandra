@@ -60,7 +60,7 @@ public class ServiceRepository {
     }
 
     public String createTable(List<String> columns) {
-        String tableName = "ujisistemc.coba";
+        String tableName = "ujisistemc.saleslineframe";
         List<String> column = new ArrayList<>();
 
         for (String col : columns) {
