@@ -41,8 +41,6 @@ public class ServiceController {
             @RequestBody List<Map<String, Object>> dataList
     ) {
         try {
-//            String tableName = headers.getFirst("tableName");
-//            System.out.println(tableName);
             List<String> key = new ArrayList<>();
             for (Map<String, Object> data : dataList) {
                 key.addAll(data.keySet());
@@ -50,40 +48,39 @@ public class ServiceController {
             }
 
             listToLowercase convToLow = new listToLowercase();
-            List<String> upKey = convToLow.listLowercase(key);
+            List<String> lowKey = convToLow.listLowercase(key);
 
             List<String> tableName = serviceRepository.getAllTableNames("ujisistemc");
+
+            List<Boolean> isDuplicate = new ArrayList<>();
             for (String table : tableName) {
-                List<String> column = serviceRepository.getColumnList(table, "ujisistemc");
-                boolean cmpr = CompareList.compareLists(upKey, column);
+                List<String> column = convToLow.listLowercase(serviceRepository.getColumnList(table, "ujisistemc"));
+                boolean cmpr = CompareList.compareLists(lowKey, column);
                 if (cmpr) {
-                    System.out.println("yes");
+                    isDuplicate.add(true);
                 } else {
-                    System.out.println("no");
+                    isDuplicate.add(false);
                 }
-                System.out.println(column);
-                System.out.println(upKey);
+//                System.out.println(column);
+//                System.out.println(lowKey);
 //                System.out.println("\n\n");
             }
 
+            boolean createTable = !isDuplicate.contains(true);
 
-//            System.out.println(tableName);
+            String newTableName = headers.getFirst("tableName");
 
-
-//            String tableName = serviceRepository.createTable(key);
-//            serviceRepository.insertData(dataList, tableName);
-//            for (Map<String, Object> data : dataList) {
-//                  serviceRepository.insertData(data);
-////                System.out.println(data.keySet());
-////                key.add(data.keySet().toString());
-//                  key.addAll(data.keySet());
-////                System.out.println(data.values());
-//            }
+            if (createTable) {
+                String table = serviceRepository.createTable(key, newTableName);
+                serviceRepository.insertData(dataList, table);
+            } else {
+                serviceRepository.insertData(dataList, newTableName);
+            }
             return ResponseEntity.ok("Data inserted succesfully!");
         } catch (Exception e) {
             String eMessage = "Failed to insert data!";
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(e.toString());
+                    .body(eMessage);
         }
     }
 

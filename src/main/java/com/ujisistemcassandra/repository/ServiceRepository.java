@@ -17,7 +17,7 @@ public class ServiceRepository {
     }
 
     public List<Map<String, Object>> getAllData(){
-        String tableName = "ujisistemc.saleslineframe";
+        String tableName = "ujisistemc.mahasiswa";
         String sql = String.format("SELECT * FROM %s", tableName);
         return jdbcTemplate.query(sql,
                 (resultSet, rowNum) -> {
@@ -77,22 +77,27 @@ public class ServiceRepository {
         return columnList;
     }
 
-    public String createTable(List<String> columns) {
-        String tableName = "ujisistemc.coba";
-        List<String> column = new ArrayList<>();
+    public String createTable(List<String> columns, String table) {
+        try {
+            String tableName = "ujisistemc." + table;
+            List<String> column = new ArrayList<>();
 
-        for (String col : columns) {
-            String sqlCol = col + " varchar";
-            column.add(sqlCol);
+            for (String col : columns) {
+                String sqlCol = col + " varchar";
+                column.add(sqlCol);
+            }
+
+            column.add("PRIMARY KEY (Tahun)");
+
+            String cols = String.join(", ", column);
+
+            String sql = String.format("CREATE TABLE IF NOT EXISTS %s (%S)", tableName, cols);
+            jdbcTemplate.update(sql);
+
+            return tableName;
+        } catch (Exception e) {
+            System.out.println(e);
+            return e.toString();
         }
-
-        column.add("PRIMARY KEY (RCVNO)");
-
-        String cols = String.join(", ", column);
-
-        String sql = String.format("CREATE TABLE IF NOT EXISTS %s (%S)", tableName, cols);
-        jdbcTemplate.update(sql);
-
-        return tableName;
     }
 }
