@@ -1,0 +1,4 @@
+columnName,typeData
+a,int
+b,date
+PRIMARY KEY,(a)

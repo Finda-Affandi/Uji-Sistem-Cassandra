@@ -1,7 +1,0 @@
-com\ujisistemcassandra\converter\listToLowercase.class
-com\ujisistemcassandra\repository\ServiceRepository.class
-com\ujisistemcassandra\configuration\CassandraJdbcConfig.class
-com\ujisistemcassandra\mapper\MapReader.class
-com\ujisistemcassandra\compareter\CompareList.class
-com\ujisistemcassandra\controller\ServiceController.class
-com\ujisistemcassandra\UjisistemcassandraApplication.class
