@@ -95,7 +95,7 @@ public class ServiceRepository {
 
         String sql = template + " VALUES " + joinAllValue;
 
-        jdbcTemplate.batchUpdate(sql);
+        jdbcTemplate.update(sql);
 
         System.out.println(sql);
     }
@@ -133,7 +133,7 @@ public class ServiceRepository {
             String wrapValue = "(" + joinValue +")";
 
             String sql = template + " VALUES " + wrapValue;
-            jdbcTemplate.batchUpdate(sql);
+            jdbcTemplate.update(sql);
 
 //            allValue.add(wrapValue);
         }
