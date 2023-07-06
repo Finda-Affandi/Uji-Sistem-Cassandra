@@ -100,13 +100,47 @@ public class ServiceRepository {
 //        }
 //    }
 
-    public void insertData(List<Map<String,Object>> dataList, String tableName) {
-        String cassandraTable = "my_keyspace." + tableName;
+//    public void insertData(List<Map<String,Object>> dataList, String tableName) {
+//        String cassandraTable = "my_keyspace." + tableName;
+//        List<String> column = new ArrayList<>();
+//        for (Map<String, Object> data : dataList) {
+//            column.addAll(data.keySet());
+//            break;
+//        }
+//        String colName = String.join(",", column);
+//        String template = "INSERT INTO" + " " + cassandraTable + " " + "(" + colName +")";
+//
+//        List<String> allValue = new ArrayList<>();
+//        List<String> value = new ArrayList<>();
+//        for (Map<String, Object> data : dataList) {
+//            value.clear();
+//            for (Object obj : data.values()) {
+//                value.add("'" + obj.toString() + "'");
+//            }
+//            String joinValue = String.join(",", value);
+//            String wrapValue = "(" + joinValue +")";
+//
+//            allValue.add(wrapValue);
+//        }
+//        System.out.println("cekkk");
+//
+//        String joinAllValue = String.join(",", allValue);
+//
+//        String sql = template + " VALUES " + joinAllValue;
+//
+//        jdbcTemplate.update(sql);
+//    }
+
+    public void insertData(List<Map<String,Object>> dataList, Map<String, Object> dataType, String tableName) {
+        String cassandraTable = "ujisistemc." + tableName;
         List<String> column = new ArrayList<>();
+        DateConverter dateConverter = new DateConverter();
+
         for (Map<String, Object> data : dataList) {
             column.addAll(data.keySet());
             break;
         }
+
         String colName = String.join(",", column);
         String template = "INSERT INTO" + " " + cassandraTable + " " + "(" + colName +")";
 
@@ -114,70 +148,35 @@ public class ServiceRepository {
         List<String> value = new ArrayList<>();
         for (Map<String, Object> data : dataList) {
             value.clear();
-            for (Object obj : data.values()) {
-                value.add("'" + obj.toString() + "'");
+            for (Object type : dataType.keySet()) {
+                if (Objects.equals(dataType.get(type).toString(), "int")) {
+                    value.add(data.get(type).toString());
+                } else if (Objects.equals(dataType.get(type).toString(), "varchar")) {
+                    value.add("'" + data.get(type).toString() + "'");
+                } else if (Objects.equals(dataType.get(type).toString(), "date")) {
+                    value.add("'" + dateConverter.cassandraDate(data.get(type).toString()) + "'");
+                } else if (Objects.equals(dataType.get(type).toString(), "float")) {
+                    value.add(data.get(type).toString());
+                }
             }
+
             String joinValue = String.join(",", value);
             String wrapValue = "(" + joinValue +")";
 
-            allValue.add(wrapValue);
+            String sql = template + " VALUES " + wrapValue;
+            jdbcTemplate.batchUpdate(sql);
+
+//            allValue.add(wrapValue);
         }
-        System.out.println("cekkk");
+//
+//        String joinAllValue = String.join(",", allValue);
+//
+//        String sql = template + " VALUES " + joinAllValue;
+//        System.out.println(sql);
 
-        String joinAllValue = String.join(",", allValue);
 
-        String sql = template + " VALUES " + joinAllValue;
 
-        jdbcTemplate.update(sql);
     }
-
-//    public void insertDataWithMap(List<Map<String,Object>> dataList, Map<String, Object> dataType, String tableName) {
-//        String cassandraTable = "my_keyspace." + tableName;
-//        List<String> column = new ArrayList<>();
-//        DateConverter dateConverter = new DateConverter();
-//
-//        for (Map<String, Object> data : dataList) {
-//            column.addAll(data.keySet());
-//            break;
-//        }
-//
-//        String colName = String.join(",", column);
-//        String template = "INSERT INTO" + " " + cassandraTable + " " + "(" + colName +")";
-//
-//        List<String> allValue = new ArrayList<>();
-//        List<String> value = new ArrayList<>();
-//        System.out.println(dataType);
-//        for (Map<String, Object> data : dataList) {
-//            value.clear();
-//            for (Object type : dataType.keySet()) {
-//                if (Objects.equals(dataType.get(type).toString(), "int")) {
-//                    value.add(data.get(type).toString());
-//                } else if (Objects.equals(dataType.get(type).toString(), "varchar")) {
-//                    value.add("'" + data.get(type).toString() + "'");
-//                } else if (Objects.equals(dataType.get(type).toString(), "date")) {
-//                    value.add("'" + dateConverter.cassandraDate(data.get(type).toString()) + "'");
-//                } else if (Objects.equals(dataType.get(type).toString(), "float")) {
-//                    value.add(data.get(type).toString());
-//                }
-//            }
-//
-//            String joinValue = String.join(",", value);
-//            String wrapValue = "(" + joinValue +")";
-//
-//            String sql = template + " VALUES " + wrapValue;
-//            jdbcTemplate.batchUpdate(sql);
-//
-////            allValue.add(wrapValue);
-//        }
-////
-////        String joinAllValue = String.join(",", allValue);
-////
-////        String sql = template + " VALUES " + joinAllValue;
-////        System.out.println(sql);
-//
-//
-//
-//    }
 
     public List<String> getAllTableNames() {
         String query = "SELECT table_name FROM system_schema.tables WHERE keyspace_name = 'my_keyspace';";
@@ -213,7 +212,7 @@ public class ServiceRepository {
 //    }
 
     public void createTable(Map<String, Object> columnList, String tableName) {
-        String cassandraTable = "ujisistem." + tableName;
+        String cassandraTable = "ujisistemc." + tableName;
         List<String> column = new ArrayList<>();
         List<String> columnAndType = new ArrayList<>();
         column.addAll(columnList.keySet());

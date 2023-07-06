@@ -1,9 +1,6 @@
 package com.ujisistemcassandra.controller;
 
 
-import com.ujisistemcassandra.compareter.CompareList;
-import com.ujisistemcassandra.converter.listToLowercase;
-import com.ujisistemcassandra.mapper.MapReader;
 import com.ujisistemcassandra.repository.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -26,6 +23,8 @@ public class ServiceController {
     public ServiceController(ServiceRepository serviceRepository) {
         this.serviceRepository = serviceRepository;
     }
+
+    Map<String, Object> dataTypeMapping = new HashMap<>();
 
 //    @GetMapping("/cassandra")
 //    public ResponseEntity<List<Map<String, Object>>> getAllData(@RequestHeader HttpHeaders headers) {
@@ -134,9 +133,9 @@ public class ServiceController {
         @RequestBody List<Map<String, Object>> dataList
     ) {
     try {
-        System.out.println("insert");
         String table = headers.getFirst("table-name");
-        serviceRepository.insertData(dataList, table);
+        Map<String, Object> dataMap = (Map<String, Object>) dataTypeMapping.get(table);
+        serviceRepository.insertData(dataList, dataMap, table);
         return ResponseEntity.ok("Data inserted succesfully!");
     } catch (Exception e) {
         String eMessage = "Failed to insert data!";
@@ -152,6 +151,7 @@ public class ServiceController {
     {
         String tableName = headers.getFirst("table-name");
         serviceRepository.createTable(dataColumn, tableName);
+        dataTypeMapping.put(tableName, dataColumn);
     }
 
     @PostMapping("/coba")
