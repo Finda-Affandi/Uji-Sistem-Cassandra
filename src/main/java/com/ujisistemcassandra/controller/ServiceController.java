@@ -39,22 +39,27 @@ public class ServiceController {
 //    }
 
     @GetMapping("/cassandra")
-    public ResponseEntity<List<Map<String, Object>>> getAllDataforService(@RequestHeader HttpHeaders headers) {
+    public ResponseEntity<String> getAllDataforService(@RequestHeader HttpHeaders headers) {
         try {
             List<String> tableNames = serviceRepository.getAllTableNames();
+            long startTime = System.currentTimeMillis(); // Waktu mulai
             List<List<Map<String, Object>>> dataLists = serviceRepository.getBothData(tableNames);
+            long endTime = System.currentTimeMillis(); // Waktu selesai
+            long duration = endTime - startTime; // Durasi akses (dalam milidetik)
+            String waktu = duration + "ms";
 
             List<Map<String, Object>> combinedData = new ArrayList<>();
             for (List<Map<String, Object>> dataList : dataLists) {
                 combinedData.addAll(dataList);
             }
 
-            return ResponseEntity.ok(combinedData);
+            return ResponseEntity.ok(combinedData + "\n" + waktu);
         } catch (Exception e) {
-            String eMessage = "An error occurred while retrieving data";
+            String eMessage = "Terjadi kesalahan saat mengambil data";
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 
 //    @PostMapping("/cassandra")
 //    public ResponseEntity<String> insertData(
@@ -129,29 +134,34 @@ public class ServiceController {
 
     @PostMapping("/cassandra")
     public ResponseEntity<String> insertDAata(
-        @RequestHeader HttpHeaders headers,
-        @RequestBody List<Map<String, Object>> dataList
+            @RequestHeader HttpHeaders headers,
+            @RequestBody List<Map<String, Object>> dataList
     ) {
-    try {
-        String table = headers.getFirst("table-name");
-        Map<String, Object> dataMap = (Map<String, Object>) dataTypeMapping.get(table);
-        serviceRepository.insertData(dataList, dataMap, table);
-        return ResponseEntity.ok("Data inserted succesfully!");
-    } catch (Exception e) {
-        String eMessage = "Failed to insert data!";
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(eMessage);
-    }
+        try {
+            String table = headers.getFirst("table-name");
+            Map<String, Object> dataMap = (Map<String, Object>) dataTypeMapping.get(table);
+            serviceRepository.insertData(dataList, dataMap, table);
+            return ResponseEntity.ok("Data inserted succesfully!");
+        } catch (Exception e) {
+            String eMessage = "Failed to insert data!";
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(eMessage);
+        }
     }
 
     @PostMapping("/cassandra/create-table")
-    public void createTable(
+    public ResponseEntity<String> createTable(
             @RequestHeader HttpHeaders headers,
             @RequestBody Map<String, Object> dataColumn)
     {
         String tableName = headers.getFirst("table-name");
+        long startTime = System.currentTimeMillis(); // Waktu mulai
         serviceRepository.createTable(dataColumn, tableName);
+        long endTime = System.currentTimeMillis(); // Waktu selesai
+        long duration = endTime - startTime; // Durasi akses (dalam milidetik)
         dataTypeMapping.put(tableName, dataColumn);
+
+        return ResponseEntity.ok("Waktu : " + duration + "ms");
     }
 
     @PostMapping("/coba")

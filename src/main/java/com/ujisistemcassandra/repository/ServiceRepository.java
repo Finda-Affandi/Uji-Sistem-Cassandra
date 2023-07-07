@@ -40,7 +40,7 @@ public class ServiceRepository {
             List<List<Map<String, Object>>> result = new ArrayList<>();
 
             for (String tableName : tableNames) {
-                String sql = "SELECT * FROM " + tableName;
+                String sql = "SELECT * FROM ujisistem." + tableName;
 
                 List<Map<String, Object>> dataList = jdbcTemplate.query(sql, (resultSet, rowNum) -> {
                     ResultSetMetaData metaData = resultSet.getMetaData();
@@ -132,7 +132,7 @@ public class ServiceRepository {
 //    }
 
     public void insertData(List<Map<String,Object>> dataList, Map<String, Object> dataType, String tableName) {
-        String cassandraTable = "ujisistemc." + tableName;
+        String cassandraTable = "ujisistem." + tableName;
         List<String> column = new ArrayList<>();
         DateConverter dateConverter = new DateConverter();
 
@@ -179,7 +179,7 @@ public class ServiceRepository {
     }
 
     public List<String> getAllTableNames() {
-        String query = "SELECT table_name FROM system_schema.tables WHERE keyspace_name = 'my_keyspace';";
+        String query = "SELECT table_name FROM system_schema.tables WHERE keyspace_name = 'ujisistem';";
         return jdbcTemplate.queryForList(query, String.class);
     }
 //
@@ -212,7 +212,7 @@ public class ServiceRepository {
 //    }
 
     public void createTable(Map<String, Object> columnList, String tableName) {
-        String cassandraTable = "ujisistemc." + tableName;
+        String cassandraTable = "ujisistem." + tableName;
         List<String> column = new ArrayList<>();
         List<String> columnAndType = new ArrayList<>();
         column.addAll(columnList.keySet());
