@@ -18,31 +18,22 @@ public class ServiceRepository {
     }
 
 
-    public List<List<Map<String, Object>>> getBothData(List<String> tableNames) {
+    public List<Map<String, Object>> getBothData(String tableName) {
         try {
-            List<List<Map<String, Object>>> result = new ArrayList<>();
+            String sql = "SELECT * FROM ujisistemc." + tableName;
+            return jdbcTemplate.query(sql, (resultSet, rowNum) -> {
+                ResultSetMetaData metaData = resultSet.getMetaData();
+                int columnCount = metaData.getColumnCount();
 
-            for (String tableName : tableNames) {
-                String sql = "SELECT * FROM ujisistem." + tableName;
+                Map<String, Object> dataMap = new HashMap<>();
+                for (int i = 1; i <= columnCount; i++) {
+                    String columnName = metaData.getColumnName(i);
+                    Object columnValue = resultSet.getObject(i);
+                    dataMap.put(columnName, columnValue);
+                }
 
-                List<Map<String, Object>> dataList = jdbcTemplate.query(sql, (resultSet, rowNum) -> {
-                    ResultSetMetaData metaData = resultSet.getMetaData();
-                    int columnCount = metaData.getColumnCount();
-
-                    Map<String, Object> dataMap = new HashMap<>();
-                    for (int i = 1; i <= columnCount; i++) {
-                        String columnName = metaData.getColumnName(i);
-                        Object columnValue = resultSet.getObject(i);
-                        dataMap.put(columnName, columnValue);
-                    }
-
-                    return dataMap;
-                });
-
-                result.add(dataList);
-            }
-
-            return result;
+                return dataMap;
+            });
         } catch (DataAccessException e) {
             e.printStackTrace();
             return Collections.emptyList();
@@ -51,7 +42,7 @@ public class ServiceRepository {
 
 
     public void insertData(List<Map<String,Object>> dataList, Map<String, Object> dataType, String tableName) {
-        String cassandraTable = "ujisistem." + tableName;
+        String cassandraTable = "ujisistemc." + tableName;
         List<String> column = new ArrayList<>();
         DateConverter dateConverter = new DateConverter();
 
@@ -87,13 +78,9 @@ public class ServiceRepository {
         }
     }
 
-    public List<String> getAllTableNames() {
-        String query = "SELECT table_name FROM system_schema.tables WHERE keyspace_name = 'ujisistem';";
-        return jdbcTemplate.queryForList(query, String.class);
-    }
 
     public void createTable(Map<String, Object> columnList, String tableName) {
-        String cassandraTable = "ujisistem." + tableName;
+        String cassandraTable = "ujisistemc." + tableName;
         List<String> column = new ArrayList<>();
         List<String> columnAndType = new ArrayList<>();
         column.addAll(columnList.keySet());
