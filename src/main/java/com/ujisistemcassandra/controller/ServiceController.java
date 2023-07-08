@@ -96,5 +96,12 @@ public class ServiceController {
         return ResponseEntity.ok(response);
     }
 
+    @DeleteMapping("/cassandra/truncate")
+    public ResponseEntity<String> truncateTable(@RequestHeader HttpHeaders headers) {
+        String tableName = headers.getFirst("table-name");
+        serviceRepository.truncateTable(tableName);
+        return ResponseEntity.ok(tableName);
+    }
+
 }
 

@@ -20,7 +20,7 @@ public class ServiceRepository {
 
     public List<Map<String, Object>> getBothData(String tableName) {
         try {
-            String sql = "SELECT * FROM ujisistemc." + tableName;
+            String sql = "SELECT * FROM ujisistem." + tableName;
             return jdbcTemplate.query(sql, (resultSet, rowNum) -> {
                 ResultSetMetaData metaData = resultSet.getMetaData();
                 int columnCount = metaData.getColumnCount();
@@ -42,7 +42,7 @@ public class ServiceRepository {
 
 
     public void insertData(List<Map<String,Object>> dataList, Map<String, Object> dataType, String tableName) {
-        String cassandraTable = "ujisistemc." + tableName;
+        String cassandraTable = "ujisistem." + tableName;
         List<String> column = new ArrayList<>();
         DateConverter dateConverter = new DateConverter();
 
@@ -80,7 +80,7 @@ public class ServiceRepository {
 
 
     public void createTable(Map<String, Object> columnList, String tableName) {
-        String cassandraTable = "ujisistemc." + tableName;
+        String cassandraTable = "ujisistem." + tableName;
         List<String> column = new ArrayList<>();
         List<String> columnAndType = new ArrayList<>();
         column.addAll(columnList.keySet());
@@ -96,4 +96,10 @@ public class ServiceRepository {
         String sql = String.format("CREATE TABLE IF NOT EXISTS %s (%S)", cassandraTable, cols);
         jdbcTemplate.update(sql);
     }
+
+    public void truncateTable( String tableName ) {
+        String query = "TRUNCATE " + tableName + ";";
+        jdbcTemplate.update(query);
+    }
+
 }
